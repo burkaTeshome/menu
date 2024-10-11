@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Menu Items</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212; /* Dark black background */
+            color: #f1c40f; /* Gold color */
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: #1c1c1c; /* Slightly lighter black for contrast */
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #f1c40f;
+            text-align: center;
+            font-weight: 600;
+        }
+        input, button, select {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+        input, select {
+            background-color: #2c2c2c; /* Dark input background */
+            color: #fff;
+        }
+        button {
+            background-color: #f1c40f;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #d4ac0d; /* Darker gold for hover effect */
+        }
+        .form-wrapper {
+            width: 100%;
+            max-width: 500px; /* Limit the width of the form */
+            margin-bottom: 40px;
+        }
+        .item-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .document-section {
+            width: 30%; /* Three items per row */
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+        .document-title {
+            font-weight: bold;
+            color: #f1c40f;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .item {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .item span {
+            color: #fff;
+        }
+        .item .icon-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .item button {
+            background-color: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #fff;
+        }
+        .item button.edit-btn {
+            color: #2980b9;
+        }
+        .item button.delete-btn {
+            color: #e74c3c;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #searchItem {
+            background-color: #2c2c2c;
+            color: #fff;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #1c1c2c;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            width: 80%; /* Could be more or less, depending on screen size */
+            color: #f1c40f; /* Gold color */
+            text-align: center;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-button {
+            background-color: #f1c40f;
+            color: black;
+            border: none;
+            padding: 10px 10px; /* Reduced padding for a smaller button */
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px; /* Slightly smaller font size */
+            margin-top: 10px;
+            transition: background-color 0.3s; /* Smooth transition for hover */
+        }
+        .modal-content {
+    background-color: #1c1c2c;
+    margin: 20% auto; /* Adjusted to center it more */
+    padding: 10px; /* Reduced padding */
+    border: 1px solid #444;
+    border-radius: 10px;
+    width: 300px; /* Set a fixed width for the modal */
+    height: 100px;
+    color: #f1c40f; /* Gold color */
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Added shadow for depth */
+}
+
+
+        .modal-button:hover {
+            background-color: #d4ac0d; /* Darker gold for hover effect */
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 1024px) {
+            .document-section {
+                width: 45%; /* Two items per row for medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .document-section {
+                width: 100%; /* One item per row for small screens */
+            }
+
+            .form-wrapper {
+                max-width: 100%;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-wrapper {
+                padding: 0;
+            }
+
+            .document-section {
+                padding: 10px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Add Menu Item</h2>
+        <div class="form-wrapper">
+            <form id="addItemForm">
+                <select id="documentId" required>
+                    <option value="" disabled selected>Select Document ID</option>
+                </select>
+                <input type="text" id="itemName" placeholder="Item Name" required>
+                <input type="text" id="itemPrice" placeholder="Item Price (in Birr)" required>
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+
+        <h2>Menu Items</h2>
+        <input type="text" id="searchItem" placeholder="Search Item Name" oninput="filterItems()">
+        <div class="item-list" id="itemList"></div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="modal-message"></p>
+            <button id="modal-confirm" class="modal-button">OK</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
+        import { getFirestore, collection, getDocs, doc, updateDoc, arrayUnion, getDoc } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js';
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZCHo8ESzH_ivZJGxlC9bjGKnhCFArT-E",
+            authDomain: "ejeta-coffee.firebaseapp.com",
+            projectId: "ejeta-coffee",
+            storageBucket: "ejeta-coffee.appspot.com",
+            messagingSenderId: "767207978097",
+            appId: "1:767207978097:web:3df8271ead1f96d54017d0",
+            measurementId: "G-J2Q31D4ZNX"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        const form = document.getElementById('addItemForm');
+        const documentIdSelect = document.getElementById('documentId');
+        const itemList = document.getElementById('itemList');
+        const searchInput = document.getElementById('searchItem');
+        let allMenuItems = {};
+    
+        async function loadDocumentIds() {
+            const menuRef = collection(db, 'menu');
+            const snapshot = await getDocs(menuRef);
+            documentIdSelect.innerHTML = '<option value="" disabled selected>Select Document ID</option>'; // Reset select
+            snapshot.forEach(doc => {
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = doc.id;
+                documentIdSelect.appendChild(option);
+            });
+        }
+    
+        async function loadMenuItems() {
+            const menuRef = collection(db, 'menu');
+            const snapshot = await getDocs(menuRef);
+            allMenuItems = {}; // Reset before loading new data
+            itemList.innerHTML = ''; // Clear existing items
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                allMenuItems[doc.id] = data.items; // Store items by document ID
+                const docSection = document.createElement('div');
+                docSection.classList.add('document-section');
+                docSection.innerHTML = `<div class="document-title">${doc.id}</div>`;
+                data.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('item');
+                    itemDiv.innerHTML = `
+                        <span>${item.name} - ${item.price} Birr</span>
+                        <div class="icon-buttons">
+                            <button class="edit-btn" onclick="editItem('${doc.id}', '${item.name}', '${item.price}')"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="deleteItem('${doc.id}', '${item.name}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    docSection.appendChild(itemDiv);
+                });
+                itemList.appendChild(docSection);
+            });
+        }
+    
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const docId = documentIdSelect.value;
+            const itemName = document.getElementById('itemName').value;
+            const itemPrice = document.getElementById('itemPrice').value;
+    
+            const docRef = doc(db, 'menu', docId);
+            try {
+                await updateDoc(docRef, {
+                    items: arrayUnion({ name: itemName, price: itemPrice })
+                });
+                openModal('Item added successfully!'); // Updated
+                form.reset();
+                loadMenuItems(); // Reload menu items
+            } catch (error) {
+                console.error('Error adding item: ', error);
+            }
+        });
+    
+        window.editItem = async (docId, itemName, itemPrice) => {
+            const newPrice = prompt('Enter new price for ' + itemName, itemPrice);
+            if (newPrice) {
+                const docRef = doc(db, 'menu', docId);
+                const docSnap = await getDoc(docRef);
+                const items = docSnap.data().items;
+                const updatedItems = items.map(item => {
+                    if (item.name === itemName) {
+                        return { name: itemName, price: newPrice };
+                    }
+                    return item;
+                });
+                await updateDoc(docRef, { items: updatedItems });
+                openModal('Item updated successfully!'); // Updated
+                loadMenuItems(); // Reload menu items
+            }
+        };
+    
+        window.deleteItem = async (docId, itemName) => {
+            const confirmDelete = confirm('Are you sure you want to delete ' + itemName + '?');
+            if (confirmDelete) {
+                const docRef = doc(db, 'menu', docId);
+                const docSnap = await getDoc(docRef);
+                const items = docSnap.data().items;
+                const updatedItems = items.filter(item => item.name !== itemName);
+                await updateDoc(docRef, { items: updatedItems });
+                openModal('Item deleted successfully!'); // Updated
+                loadMenuItems(); // Reload menu items
+            }
+        };
+    
+        window.filterItems = function() {
+    const searchValue = searchInput.value.toLowerCase();
+    itemList.innerHTML = ''; // Clear existing items
+    for (const docId in allMenuItems) {
+        const items = allMenuItems[docId];
+        const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchValue));
+        if (filteredItems.length > 0) {
+            const docSection = document.createElement('div');
+            docSection.classList.add('document-section');
+            docSection.innerHTML = `<div class="document-title">${docId}</div>`;
+            filteredItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item');
+                itemDiv.innerHTML = `
+                    <span>${item.name} - ${item.price} Birr</span>
+                    <div class="icon-buttons">
+                        <button class="edit-btn" onclick="editItem('${docId}', '${item.name}', '${item.price}')"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" onclick="deleteItem('${docId}', '${item.name}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                docSection.appendChild(itemDiv);
+            });
+            itemList.appendChild(docSection);
+        }
+    }
+};
+
+
+    
+        function openModal(message) {
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal').style.display = 'block';
+        }
+    
+        // Close modal functionality
+        document.querySelector('.close-button').onclick = function() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    
+        document.getElementById('modal-confirm').onclick = function() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    
+        // Initialize the application
+        loadDocumentIds();
+        loadMenuItems();
+    </script>
+</body>
+</html>

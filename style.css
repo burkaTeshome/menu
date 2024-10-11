@@ -1,0 +1,657 @@
+/* Resetting default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* General Styles */
+html {
+    scroll-behavior: smooth; /* Enables smooth scrolling */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+
+/* Header Styles */
+header {
+    background-color: #111;
+    padding: 20px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    color: #f0c13b;
+    transition: transform 0.3s;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+/* Navigation Styles */
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease, text-shadow 0.3s;
+}
+
+nav ul li a:hover {
+    color: #f0c13b;
+    text-shadow: 0 0 10px #f0c13b;
+}
+
+
+/* Menu Section */
+.menu-section {
+    padding: 100px 0;
+    background-color: #111;
+    border-top: 5px solid #f0c13b;
+    margin-top: 0px; /* Space from the fixed header */
+}
+
+.menu-section h2 {
+    text-align: center;
+    color: #f0c13b;
+    font-size: 36px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.menu-subtitle {
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 50px;
+    font-weight: 300; /* Light font weight for a softer look */
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 0 20px; /* Padding for better spacing */
+}
+
+.menu-item {
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+    border: 2px solid #f0c13b; /* Gold border */
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.menu-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    background-color: rgba(240, 193, 59, 0.2); /* Change background on hover */
+}
+
+.menu-item img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    max-height: 200px; /* Limit max height for uniformity */
+    object-fit: cover; /* Cover the area while maintaining aspect ratio */
+    margin-bottom: 20px;
+    border-radius: 10px; /* Round the image corners */
+}
+
+.menu-item h3 {
+    margin: 10px 0;
+    color: #f0c13b;
+    font-size: 24px; /* Increased font size */
+}
+
+.menu-item ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    text-align: left; /* Align text to the left for better readability */
+}
+
+.menu-item ul li {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: space-between; /* Space between name and price */
+    font-size: 16px; /* Font size */
+    font-weight: 600; /* Bold font weight */
+    padding: 10px 0; /* Padding for spacing */
+    border-bottom: 1px solid rgba(240, 193, 59, 0.3); /* Optional: adds a divider between items */
+}
+
+/* Optional: Last Item without Bottom Border */
+.menu-item ul li:last-child {
+    border-bottom: none; /* Remove bottom border from the last item */
+}
+
+ 
+
+/* Animations */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-item img {
+        max-height: 150px; /* Adjust max height for smaller screens */
+    }
+
+    .menu-item h3 {
+        font-size: 20px; /* Adjust title font size */
+    }
+
+    .menu-item ul li {
+        font-size: 14px; /* Adjust list font size */
+    }
+
+    nav ul {
+        display: none; /* Hide the menu by default */
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #111;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul.show {
+        display: flex; /* Show the menu when .show class is added */
+    }
+
+    nav ul li {
+        margin: 15px 0;
+    }
+
+    @media (max-width: 768px) {
+    .hamburger {
+        display: flex; /* Show the hamburger icon */
+    }
+}
+
+}
+
+/* Hamburger Menu */
+.hamburger {
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #f0c13b;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+/* Change color of hamburger icon when active */
+.hamburger.active span {
+    background-color: #d4a126;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex; /* Show the hamburger icon */
+    }
+}
+
+
+
+
+
+/* Footer Container */
+.footer-container {
+    background-color: #222; /* Dark background */
+    color: #f2f2f2; /* Light text color */
+    padding: 20px 10px;
+    text-align: center;
+    font-family: 'Lato', sans-serif; /* Use a modern font */
+}
+
+/* Single Card with Divider */
+.card {
+    background-color: #333; /* Card background */
+    color: #f2f2f2; /* Text color */
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    margin: 10px auto;
+    width: 70%; /* Centered card with width */
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Slight lift on hover */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+}
+
+/* Titles */
+h4 {
+    font-size: 20px;
+    color: #f1c40f; /* Gold color for titles */
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Card content */
+.card p {
+    margin: 5px 0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Divider between sections */
+.divider {
+    width: 80%;
+    height: 2px;
+    background-color: #f1c40f; /* Gold line */
+    margin: 20px auto;
+    opacity: 0.8;
+}
+
+/* Social Media Icons */
+.social {
+    margin-top: 20px;
+}
+
+.social a {
+    margin: 0 10px;
+    display: inline-block;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.social a:hover {
+    opacity: 1;
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.social img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* Round icons */
+}
+
+/* Footer Content */
+.footer-content {
+    margin-top: 40px;
+    font-size: 16px;
+    font-weight: 300;
+    color: #aaa; /* Lighter color for text */
+}
+
+.footer-content p {
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .card {
+        width: 95%; /* Full width for smaller screens */
+        padding: 20px;
+    }
+
+    .divider {
+        width: 100%; /* Full width divider for smaller screens */
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+.footer-content {
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+
+/* Footer Content */
+.footer-content {
+    margin-top: 40px;
+    font-size: 16px;
+    font-weight: 300;
+    color: #aaa; /* Lighter color for text */
+}
+
+.footer-content p {
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.footer-content a {
+    color: #f1c40f; /* Gold color for link */
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    position: relative;
+    display: inline-block;
+}
+
+.footer-content a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #f1c40f;
+    transition: width 0.3s ease; /* Line grows from left to right */
+}
+
+.footer-content a:hover::after {
+    width: 100%; /* Underline grows on hover */
+}
+
+.footer-content a:hover {
+    color: #fff; /* Change link color on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Social Media Icons */
+.social {
+    margin-top: 10px;
+}
+
+.social a {
+    margin: 0 10px;
+    display: inline-block;
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    color: #f2f2f2; /* Light color for visibility */
+    font-size: 34px; /* Increase the icon size */
+}
+
+.social a:hover {
+    opacity: 1;
+    transform: scale(1.2); /* Slight zoom on hover */
+}
+
+.social i {
+    width: 40px;
+    height: 40px;
+}
+
+
+
+
+.delivery-card {
+    background-color: #222; /* Elegant black background */
+    color: #fff; /* White text for contrast */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 40px;
+    align-items: center;
+    
+}
+
+.delivery-card h4 {
+    font-size: 1.5rem;
+    color: #FFD700; /* Gold color for the heading */
+    margin-bottom: 15px;
+    text-align: center;
+}
+.delivery-card p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.delivery-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.contact-box {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 250px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    justify-content: center;
+}
+
+.contact-box i {
+    color: #FFD700; /* Gold color for phone icons */
+    font-size: 1.2rem;
+}
+
+.contact-box:hover {
+    background-color: #444; /* Slight hover effect for a professional touch */
+}
+
+/* Button Styles */
+.menu-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.menu-btn {
+    background-color: #2e5390; /* Button background color */
+    color: #fff; /* Text color */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Padding */
+    margin: 5px; /* Margin between buttons */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Transition for hover effect */
+    font-size: 1.1rem; /* Font size */
+}
+
+.menu-btn:hover {
+    background-color: #4e74b4; /* Darker shade on hover */
+    transform: scale(1.05); /* Slight scaling effect */
+}
+
+.menu-btn.active {
+    background-color: #1a3d6e; /* Color for active button */
+}
+
+/* Menu Grid Styles */
+.menu-grid-container {
+    margin-top: 20px;
+}
+
+.menu-item {
+    text-align: center; /* Center align the content */
+}
+
+.menu-item img {
+    max-width: 100%; /* Make images responsive */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners for images */
+}
+
+.menu-item ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+}
+
+.menu-item li {
+    margin: 10px 0; /* Spacing between items */
+    font-size: 1rem; /* Item font size */
+}
+
+.menu-name {
+    font-weight: bold; /* Bold font for item name */
+}
+
+.menu-price {
+    color: #fff; /* Price color */
+    margin-left: 10px; /* Space between name and price */
+}
+
+.menu-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.menu-btn {
+    background-color: #2e5390; /* Color from your preference */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.menu-btn.active {
+    background-color: #1d3a7a; /* Darker shade for active button */
+    transform: scale(1.05);
+}
+
+.menu-btn:hover {
+    background-color: #3b6cb0; /* Lighter shade on hover */
+}
+/* Button Styles */
+.menu-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center the buttons */
+    margin: 20px 0; /* Space above and below the buttons */
+}
+
+.menu-btn {
+    background-color: #222; /* Black background */
+    color: #FFD700; /* Gold text */
+    
+    border: 2px solid #FFD700; /* Gold border */
+    padding: 12px 25px; /* Padding for larger buttons */
+    margin: 10px; /* Space between buttons */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, box-shadow 0.3s ease; /* Transition for hover effect */
+    font-size: 1.1rem; /* Font size */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+    position: relative; /* Position for animation */
+}
+
+/* Hover Effect */
+.menu-btn:hover {
+    background-color: #FFD700; /* Gold background on hover */
+    color: #222; /* Change text color to black on hover */
+    transform: translateY(-3px) scale(1.05); /* Slight lifting effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Deeper shadow on hover */
+}
+
+/* Active Button Effect */
+.menu-btn.active {
+    background-color: #c8a400; /* Darker gold color for active button */
+    color: #222; /* Black text for active state */
+    transform: translateY(-2px); /* Slight lift for active state */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Standard shadow for active */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .menu-btn {
+        flex: 1 1 45%; /* Allow two buttons per row on smaller screens */
+        margin: 10px; /* Space between buttons */
+        font-size: 1rem; /* Adjust font size */
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-btn {
+        flex: 1 1 50%; /* Full width for buttons on small screens */
+        margin: 10px, 5px; /* Space only on top and bottom */
+        font-size: 0.9rem; /* Smaller font size for mobile */
+    }
+}
+
+
+
+
+

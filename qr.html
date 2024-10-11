@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple URL Shortener</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #a5c1d4, #f7f9fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="color"], input[type="file"], select {
+            padding: 12px;
+            width: calc(100% - 24px);
+            font-size: 14px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="color"]:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #qrCode {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #qrCode canvas {
+            width: 256px;
+            height: 256px;
+        }
+
+        .customization {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .customization label {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-link"></i> URL Shortener</h1>
+        <label for="urlInput">Enter URL:</label>
+        <input type="text" id="urlInput" placeholder="Enter URL here" required />
+        <button onclick="shortenUrl()">Shorten URL</button>
+        <div class="result" id="result"></div>
+        <div id="qrCode"></div> <!-- Container for the QR Code -->
+
+        <div class="customization">
+            <label for="foregroundColor">QR Code Color:</label>
+            <input type="color" id="foregroundColor" value="#000000" />
+            <label for="logoUploader">Upload Logo:</label>
+            <input type="file" id="logoUploader" accept="image/*" />
+            <button onclick="customizeQRCode()">Customize QR Code</button>
+            <button onclick="downloadQRCode()">Download QR Code</button>
+        </div>
+    </div>
+
+    <!-- Include qrcode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+    <script type="module">
+        // Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDWGq71X9cbvUr29aDrHuJUcias5bGHVg",
+            authDomain: "urls-fe7d7.firebaseapp.com",
+            projectId: "urls-fe7d7",
+            storageBucket: "urls-fe7d7.appspot.com",
+            messagingSenderId: "335320552154",
+            appId: "1:335320552154:web:ab5e415f884e02172a0be3",
+            measurementId: "G-13M2YV1ZF0"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        const baseUrl = "https://urls-fe7d7.web.app/";
+    
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+    
+        window.shortenUrl = async function() {
+            const originalUrl = document.getElementById('urlInput').value.trim();
+            if (!originalUrl) {
+                alert('Please enter a valid URL');
+                return;
+            }
+    
+            let shortId;
+            let exists = true;
+    
+            while (exists) {
+                shortId = generateRandomString(6);
+                const docRef = doc(db, 'urls', shortId);
+                const docSnapshot = await getDoc(docRef);
+                exists = docSnapshot.exists();
+            }
+    
+            await setDoc(doc(db, 'urls', shortId), {
+                originalUrl: originalUrl,
+                createdAt: serverTimestamp(),
+                clickCount: 0
+            });
+    
+            const shortenedUrl = `${baseUrl}${shortId}`;
+            document.getElementById('result').innerText = `Shortened URL: ${shortenedUrl}`;
+    
+            generateQRCode(shortenedUrl);
+        };
+    
+        function generateQRCode(url) {
+    const qrCodeContainer = document.getElementById("qrCode");
+    qrCodeContainer.innerHTML = "";
+
+    // Create a larger canvas for high-quality output
+    const canvasSize = 512; // Set the desired size for high quality (e.g., 512x512)
+    const qr = new QRCode(qrCodeContainer, {
+        text: url,
+        width: canvasSize,
+        height: canvasSize,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Scale down the QR code display to a smaller size for the UI
+    const canvas = qrCodeContainer.querySelector("canvas");
+    const scaledCanvas = document.createElement("canvas");
+    scaledCanvas.width = 256; // Display size (e.g., 256x256)
+    scaledCanvas.height = 256;
+    const ctx = scaledCanvas.getContext("2d");
+    ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    qrCodeContainer.innerHTML = ""; // Clear previous canvas
+    qrCodeContainer.appendChild(scaledCanvas); // Add scaled down canvas to container
+}
+
+window.customizeQRCode = function() {
+    const url = document.getElementById("result").innerText.replace("Shortened URL: ", "");
+    const color = document.getElementById("foregroundColor").value;
+    const logoFile = document.getElementById("logoUploader").files[0];
+
+    if (!url) {
+        alert("Please shorten a URL first!");
+        return;
+    }
+
+    const qrCodeContainer = document.getElementById("qrCode");
+    qrCodeContainer.innerHTML = "";
+
+    const canvasSize = 512; // Maintain high-quality canvas size
+    const qr = new QRCode(qrCodeContainer, {
+        text: url,
+        width: canvasSize,
+        height: canvasSize,
+        colorDark: color,
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Scale down the QR code display to a smaller size for the UI
+    const canvas = qrCodeContainer.querySelector("canvas");
+    const scaledCanvas = document.createElement("canvas");
+    scaledCanvas.width = 256; // Display size (e.g., 256x256)
+    scaledCanvas.height = 256;
+    const ctx = scaledCanvas.getContext("2d");
+    ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    qrCodeContainer.innerHTML = ""; // Clear previous canvas
+    qrCodeContainer.appendChild(scaledCanvas); // Add scaled down canvas to container
+
+    if (logoFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function() {
+                const highResCanvas = qrCodeContainer.querySelector("canvas"); // Get high-res canvas
+                const highResCtx = highResCanvas.getContext("2d");
+                const logoSize = highResCanvas.width / 4; // Adjust logo size
+                const logoX = (highResCanvas.width - logoSize) / 2;
+                const logoY = (highResCanvas.height - logoSize) / 2;
+                highResCtx.drawImage(img, logoX, logoY, logoSize, logoSize);
+                
+               // Update the displayed QR code with the logo
+               scaledCtx.clearRect(0, 0, scaledCanvas.width, scaledCanvas.height); // Clear previous drawing
+                scaledCtx.drawImage(highResCanvas, 0, 0, scaledCanvas.width, scaledCanvas.height); // Draw with logo
+            };
+        };
+        reader.readAsDataURL(logoFile);
+    }
+};
+
+window.downloadQRCode = function() {
+    const canvas = document.querySelector("#qrCode canvas");
+    if (!canvas) {
+        alert("Please generate a QR code first!");
+        return;
+    }
+
+    // Create a new canvas element for high-resolution download
+    const highResCanvas = document.createElement("canvas");
+    const ctx = highResCanvas.getContext("2d");
+    const scaleFactor = 2; // Increase for higher resolution
+    highResCanvas.width = canvas.width * scaleFactor;
+    highResCanvas.height = canvas.height * scaleFactor;
+
+    // Draw the QR code to the high-resolution canvas
+    ctx.drawImage(canvas, 0, 0, highResCanvas.width, highResCanvas.height);
+
+    const link = document.createElement("a");
+    link.href = highResCanvas.toDataURL("image/png");
+    link.download = "qr_code_with_logo.png"; // Updated filename
+    link.click();
+};
+
+window.downloadQRCode = function() {
+    const canvas = document.querySelector("#qrCode canvas");
+    if (!canvas) {
+        alert("Please generate a QR code first!");
+        return;
+    }
+
+    // Create a new canvas element for high-resolution download
+    const highResCanvas = document.createElement("canvas");
+    const ctx = highResCanvas.getContext("2d");
+    const scaleFactor = 2; // Increase for higher resolution
+    highResCanvas.width = canvas.width * scaleFactor;
+    highResCanvas.height = canvas.height * scaleFactor;
+
+    // Draw the QR code to the high-resolution canvas
+    ctx.drawImage(canvas, 0, 0, highResCanvas.width, highResCanvas.height);
+
+    const link = document.createElement("a");
+    link.href = highResCanvas.toDataURL("image/png");
+    link.download = "qr_code_with_logo.png"; // Updated filename
+    link.click();
+};
+
+        window.customizeQRCode = function() {
+            const url = document.getElementById("result").innerText.replace("Shortened URL: ", "");
+            const color = document.getElementById("foregroundColor").value;
+            const logoFile = document.getElementById("logoUploader").files[0];
+    
+            if (!url) {
+                alert("Please shorten a URL first!");
+                return;
+            }
+    
+            const qrCodeContainer = document.getElementById("qrCode");
+            qrCodeContainer.innerHTML = "";
+    
+            const qr = new QRCode(qrCodeContainer, {
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark: color,
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+    
+            if (logoFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = qrCodeContainer.querySelector("canvas");
+                        const ctx = canvas.getContext("2d");
+                        const logoSize = canvas.width / 4;
+                        const logoX = (canvas.width - logoSize) / 2;
+                        const logoY = (canvas.height - logoSize) / 2;
+                        ctx.drawImage(img, logoX, logoY, logoSize, logoSize);
+                    };
+                };
+                reader.readAsDataURL(logoFile);
+            }
+        };
+    
+        window.downloadQRCode = function() {
+            const canvas = document.querySelector("#qrCode canvas");
+            if (!canvas) {
+                alert("Please generate a QR code first!");
+                return;
+            }
+    
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "qr_code_with_logo.png"; // Updated filename
+            link.click();
+        };
+    </script>
+    
+</body>
+</html>
